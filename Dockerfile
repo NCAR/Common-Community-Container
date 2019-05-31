@@ -134,8 +134,6 @@ RUN echo setenv LDFLAGS "-lm" >> /etc/csh.cshrc \
  && echo setenv PATH ".:/opt/rh/devtoolset-8/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH" >> /etc/csh.cshrc
 
 RUN mkdir /home/.ssh ; echo "StrictHostKeyChecking no" > /home/.ssh/config
-COPY default-mca-params.conf /home/.openmpi/mca-params.conf
-RUN mkdir -p /home/.openmpi
 
 # all root steps completed above, now below as regular userID comuser
 USER comuser

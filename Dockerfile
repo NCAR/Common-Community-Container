@@ -112,12 +112,6 @@ RUN source /opt/rh/devtoolset-8/enable \
  && echo dummy printout to keep travis happy ncf4-python install
 #&& python setup.py build &> /comsoftware/libs/build_log_ncf4-python_build
 
-RUN mkdir -p /var/run/sshd \
-    && ssh-keygen -A \
-    && sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config \
-    && sed -i 's/#RSAAuthentication yes/RSAAuthentication yes/g' /etc/ssh/sshd_config \
-    && sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
-
 # Set environment for interactive container shells
 RUN echo export LDFLAGS="-lm" >> /etc/bashrc \
  && echo export NETCDF=${NETCDF} >> /etc/bashrc \
@@ -133,7 +127,17 @@ RUN echo setenv LDFLAGS "-lm" >> /etc/csh.cshrc \
  && echo setenv LD_LIBRARY_PATH "/opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}" >> /etc/csh.cshrc \
  && echo setenv PATH ".:/opt/rh/devtoolset-8/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH" >> /etc/csh.cshrc
 
+# Set up ssh
 RUN mkdir /home/.ssh ; echo "StrictHostKeyChecking no" > /home/.ssh/config
+RUN mkdir -p /var/run/sshd \
+    && ssh-keygen -A \
+    && sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config \
+    && sed -i 's/#RSAAuthentication yes/RSAAuthentication yes/g' /etc/ssh/sshd_config \
+    && sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
+
+# Set up user home space correctly
+RUN chown -R comuser:comusers /home \
+ && chmod 6755 /home
 
 # all root steps completed above, now below as regular userID comuser
 USER comuser

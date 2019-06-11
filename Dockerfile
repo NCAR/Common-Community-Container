@@ -6,7 +6,7 @@ MAINTAINER Michael Kavulich <kavulich@ucar.edu>
 
 RUN yum -y update
 RUN yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper \
-  jasper-devel hostname m4 make perl tar bash tcsh time wget which zlib zlib-devel \
+  jasper-devel hostname m4 make perl tar bash ksh tcsh time wget which zlib zlib-devel \
   openssh-clients openssh-server net-tools fontconfig libgfortran libXext libXrender \
   ImageMagick sudo epel-release git
 

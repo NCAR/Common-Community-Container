@@ -112,6 +112,29 @@ RUN source /opt/rh/devtoolset-8/enable \
  && echo dummy printout to keep travis happy ncf4-python install
 #&& python setup.py build &> /comsoftware/libs/build_log_ncf4-python_build
 
+# Build Cmake v3 (centos default is v2.8, which is too old for GSI)
+RUN mkdir -p /comsoftware/libs/cmake/BUILD_DIR \
+ && source /opt/rh/devtoolset-8/enable \
+ && cd /comsoftware/libs/cmake/BUILD_DIR \
+ && curl -O -L https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3.tar.gz \
+ && tar -xf cmake-3.13.3.tar.gz \
+ && cd cmake-3.13.3 \
+ && ./bootstrap \
+ && make \
+ && make install \
+ && cd / \
+ && rm -rf /comsoftware/libs/cmake/BUILD_DIR
+
+# Build OpenBLAS with LAPACK
+RUN mkdir -p /comsoftware/libs/openblas/BUILD_DIR
+RUN source /opt/rh/devtoolset-8/enable \
+ && cd /comsoftware/libs/openblas/BUILD_DIR \
+ && curl -L -O https://github.com/xianyi/OpenBLAS/archive/v0.3.5.tar.gz \
+ && tar -xf v0.3.5.tar.gz \
+ && cd OpenBLAS-0.3.5/ \
+ && make \
+ && make PREFIX=/usr/ install
+
 # Set environment for interactive container shells
 RUN echo export LDFLAGS="-lm" >> /etc/bashrc \
  && echo export NETCDF=${NETCDF} >> /etc/bashrc \

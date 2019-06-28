@@ -13,10 +13,10 @@ RUN yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libp
 # Newer version of GNU compiler, required for WRF 2003 and 2008 Fortran constructs
 
 RUN yum -y install centos-release-scl \
- && yum -y install devtoolset-8 \
- && yum -y install devtoolset-8-gcc devtoolset-8-gcc-gfortran devtoolset-8-gcc-c++ \
- && scl enable devtoolset-8 bash \
- && scl enable devtoolset-8 tcsh 
+ && yum -y install devtoolset-7 \
+ && yum -y install devtoolset-7-gcc devtoolset-7-gcc-gfortran devtoolset-7-gcc-c++ \
+ && scl enable devtoolset-7 bash \
+ && scl enable devtoolset-7 tcsh 
 
 RUN groupadd comusers -g 9999
 RUN useradd -u 9999 -g comusers -G wheel -M -d /home comuser
@@ -29,7 +29,7 @@ ENV J 4
 
 # Build OpenMPI
 RUN mkdir -p /comsoftware/libs/openmpi/BUILD_DIR
-RUN source /opt/rh/devtoolset-8/enable \
+RUN source /opt/rh/devtoolset-7/enable \
  && cd /comsoftware/libs/openmpi/BUILD_DIR \
  && curl -L -O https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.0.tar.gz \
  && tar -xf openmpi-4.0.0.tar.gz \
@@ -45,7 +45,7 @@ RUN source /opt/rh/devtoolset-8/enable \
 
 # Build HDF5 libraries
 RUN mkdir -p /comsoftware/libs/hdf5/BUILD_DIR
-RUN source /opt/rh/devtoolset-8/enable \
+RUN source /opt/rh/devtoolset-7/enable \
  && cd /comsoftware/libs/hdf5/BUILD_DIR \
  && git clone https://bitbucket.hdfgroup.org/scm/hdffv/hdf5.git \
  && cd hdf5 \
@@ -61,7 +61,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib
 RUN yum -y install libcurl-devel zlib-devel
 ENV NETCDF /comsoftware/libs/netcdf
 RUN mkdir -p ${NETCDF}/BUILD_DIR
-RUN source /opt/rh/devtoolset-8/enable \
+RUN source /opt/rh/devtoolset-7/enable \
  && cd ${NETCDF}/BUILD_DIR \
  && curl -L -O https://github.com/Unidata/netcdf-c/archive/v4.6.2.tar.gz \
  && curl -L -O https://github.com/Unidata/netcdf-fortran/archive/v4.4.5.tar.gz \
@@ -74,7 +74,7 @@ RUN source /opt/rh/devtoolset-8/enable \
  && echo dummy printout to keep travis happy ncc make
 
 # Build netCDF Fortran libraries
-RUN source /opt/rh/devtoolset-8/enable \
+RUN source /opt/rh/devtoolset-7/enable \
  && env \
  && cd ${NETCDF}/BUILD_DIR \
  && tar -xf v4.4.5.tar.gz \
@@ -100,7 +100,7 @@ RUN pip install --upgrade setuptools \
 RUN ldconfig -v
 
 # Build netCDF4-python libraries
-RUN source /opt/rh/devtoolset-8/enable \
+RUN source /opt/rh/devtoolset-7/enable \
  && cd ${NETCDF}/BUILD_DIR \
  && tar -xf v1.5.1rel.tar.gz \
  && cd netcdf4-python-1.5.1rel/ \
@@ -114,7 +114,7 @@ RUN source /opt/rh/devtoolset-8/enable \
 
 # Build Cmake v3 (centos default is v2.8, which is too old for GSI)
 RUN mkdir -p /comsoftware/libs/cmake/BUILD_DIR \
- && source /opt/rh/devtoolset-8/enable \
+ && source /opt/rh/devtoolset-7/enable \
  && cd /comsoftware/libs/cmake/BUILD_DIR \
  && curl -O -L https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3.tar.gz \
  && tar -xf cmake-3.13.3.tar.gz \
@@ -127,7 +127,7 @@ RUN mkdir -p /comsoftware/libs/cmake/BUILD_DIR \
 
 # Build OpenBLAS with LAPACK
 RUN mkdir -p /comsoftware/libs/openblas/BUILD_DIR
-RUN source /opt/rh/devtoolset-8/enable \
+RUN source /opt/rh/devtoolset-7/enable \
  && cd /comsoftware/libs/openblas/BUILD_DIR \
  && curl -L -O https://github.com/xianyi/OpenBLAS/archive/v0.3.5.tar.gz \
  && tar -xf v0.3.5.tar.gz \
@@ -140,15 +140,15 @@ RUN echo export LDFLAGS="-lm" >> /etc/bashrc \
  && echo export NETCDF=${NETCDF} >> /etc/bashrc \
  && echo export JASPERINC=/usr/include/jasper/ >> /etc/bashrc \
  && echo export JASPERLIB=/usr/lib64/ >> /etc/bashrc \
- && echo export LD_LIBRARY_PATH="/opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}" >> /etc/bashrc  \
- && echo export PATH=".:/opt/rh/devtoolset-8/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH" >> /etc/bashrc
+ && echo export LD_LIBRARY_PATH="/opt/rh/devtoolset-7/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}" >> /etc/bashrc  \
+ && echo export PATH=".:/opt/rh/devtoolset-7/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH" >> /etc/bashrc
 
 RUN echo setenv LDFLAGS "-lm" >> /etc/csh.cshrc \
  && echo setenv NETCDF "${NETCDF}" >> /etc/csh.cshrc \
  && echo setenv JASPERINC "/usr/include/jasper/" >> /etc/csh.cshrc \
  && echo setenv JASPERLIB "/usr/lib64/" >> /etc/csh.cshrc \
- && echo setenv LD_LIBRARY_PATH "/opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}" >> /etc/csh.cshrc \
- && echo setenv PATH ".:/opt/rh/devtoolset-8/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH" >> /etc/csh.cshrc
+ && echo setenv LD_LIBRARY_PATH "/opt/rh/devtoolset-7/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}" >> /etc/csh.cshrc \
+ && echo setenv PATH ".:/opt/rh/devtoolset-7/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH" >> /etc/csh.cshrc
 
 # Set up ssh
 RUN mkdir /home/.ssh ; echo "StrictHostKeyChecking no" > /home/.ssh/config
@@ -169,8 +169,8 @@ WORKDIR /home
 ENV JASPERINC /usr/include/jasper
 ENV JASPERLIB /usr/lib64
 ENV NETCDF_classic 1
-ENV LD_LIBRARY_PATH /opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}
-ENV PATH  .:/opt/rh/devtoolset-8/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH
+ENV LD_LIBRARY_PATH /opt/rh/devtoolset-7/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}
+ENV PATH  .:/opt/rh/devtoolset-7/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH
 
 RUN ssh-keygen -f /home/.ssh/id_rsa -t rsa -N '' \
     && chmod 600 /home/.ssh/config \

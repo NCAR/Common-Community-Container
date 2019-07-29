@@ -9,8 +9,30 @@ RUN yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libp
   jasper-devel hostname m4 make perl tar bash ksh tcsh time wget which zlib zlib-devel \
   openssh-clients openssh-server net-tools fontconfig libgfortran libXext libXrender \
   ImageMagick sudo epel-release git
+# Libraries for NetCDF
+RUN yum -y install libcurl-devel zlib-devel
+RUN yum -y install python-pip python-devel
+# Libraries for HDF4
+RUN yum -y install flex flex-devel bison bison-devel
 
-# Newer version of GNU compiler, required for WRF 2003 and 2008 Fortran constructs
+
+#Source code locations
+ENV HDF4_URL       http://www.hdfgroup.org/ftp/HDF/releases/HDF4.2r3/src/HDF4.2r3.tar.gz
+ENV HDFEOS_URL     https://dtcenter.org/sites/default/files/community-code/met/docker_data/HDF-EOS2.16v1.00.tar.Z
+ENV BUFRLIB_URL https://dtcenter.org/sites/default/files/community-code/met/docker_data/BUFRLIB_v10-2-3.tar
+
+#Compiler environment variables
+ENV CC          /opt/rh/devtoolset-7/root/usr/bin/gcc
+ENV FC          /opt/rh/devtoolset-7/root/usr/bin/gfortran
+
+# Build libraries with a parallel Make
+ENV J 4
+
+# Other necessary environment variables
+ENV LD_LIBRARY_PATH /usr/local/lib
+ENV NETCDF /comsoftware/libs/netcdf
+
+# Download GNU version 7 compilers via devtoolset
 
 RUN yum -y install centos-release-scl \
  && yum -y install devtoolset-8 \
@@ -23,9 +45,6 @@ RUN useradd -u 9999 -g comusers -G wheel -M -d /home comuser
 RUN mkdir /comsoftware \
  &&  chown -R comuser:comusers /comsoftware \
  &&  chmod 6755 /comsoftware
-
-# Build the libraries with a parallel Make
-ENV J 4
 
 # Build OpenMPI
 RUN mkdir -p /comsoftware/libs/openmpi/BUILD_DIR
@@ -55,12 +74,9 @@ RUN source /opt/rh/devtoolset-8/enable \
  && make install &> /comsoftware/libs/build_log_hdf5_make \
  && echo dummy printout to keep travis happy hdf5 make \
  && rm -rf /comsoftware/libs/hdf5/BUILD_DIR
-ENV LD_LIBRARY_PATH /usr/local/lib
 
 # Build netCDF C libraries
 # Libraries for netCDF-C
-RUN yum -y install libcurl-devel zlib-devel
-ENV NETCDF /comsoftware/libs/netcdf
 RUN mkdir -p ${NETCDF}/BUILD_DIR
 RUN source /opt/rh/devtoolset-8/enable \
  && cd ${NETCDF}/BUILD_DIR \
@@ -96,16 +112,9 @@ RUN source /opt/rh/devtoolset-8/enable \
  && make install &> /comsoftware/libs/build_log_ncf_make \
  && echo dummy printout to keep travis happy ncf make
 
-#RUN yum -y install python-pip python-setuptools
-RUN yum -y install python-pip
-RUN yum -y install python-devel
-#RUN pip install Cython
-#RUN echo pip istalled Cython
 RUN pip install --upgrade pip \
  && pip install numpy \
  && echo pip istalled numpy
-#RUN pip install cython \
-# && echo pip istalled cython
 RUN pip install --upgrade setuptools \
  && echo pip istalled setuptools
 RUN ldconfig -v
@@ -177,9 +186,6 @@ RUN source /opt/rh/devtoolset-8/enable \
 #
 # Build BUFRLIB
 #
-ENV BUFRLIB_URL https://dtcenter.org/sites/default/files/community-code/met/docker_data/BUFRLIB_v10-2-3.tar
-ENV CC          /usr/bin/gcc
-ENV FC          /usr/bin/gfortran
 RUN mkdir -p /comsoftware/libs/BUFRLIB \
  && cd /comsoftware/libs/BUFRLIB \
  && echo "Downloading BUFRLIB from ${BUFRLIB_URL}" \
@@ -229,7 +235,6 @@ WORKDIR /home
 
 ENV JASPERINC /usr/include/jasper
 ENV JASPERLIB /usr/lib64
-ENV NETCDF_classic 1
 ENV LD_LIBRARY_PATH /opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8:/usr/lib64/openmpi/lib:${NETCDF}/lib:${LD_LIBRARY_PATH}
 ENV PATH  .:/opt/rh/devtoolset-8/root/usr/bin:/usr/lib64/openmpi/bin:${NETCDF}/bin:$PATH
 

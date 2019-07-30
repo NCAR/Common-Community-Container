@@ -221,9 +221,12 @@ RUN mkdir -p /var/run/sshd \
     && sed -i 's/#RSAAuthentication yes/RSAAuthentication yes/g' /etc/ssh/sshd_config \
     && sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
 
-# Set up user home space correctly
+# Set up user home space correctly and make sure user has permissions on all stuff in /comsoftware
 RUN chown -R comuser:comusers /home \
  && chmod 6755 /home
+RUN chown -R comuser:comusers /comsoftware \
+ && chmod -R 6755 /comsoftware
+
 
 # all root steps completed above, now below as regular userID comuser
 USER comuser

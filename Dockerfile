@@ -22,8 +22,8 @@ ENV HDFEOS_URL     https://dtcenter.org/sites/default/files/community-code/met/d
 ENV BUFRLIB_URL https://dtcenter.org/sites/default/files/community-code/met/docker_data/BUFRLIB_v10-2-3.tar
 
 #Compiler environment variables
-ENV CC          /opt/rh/devtoolset-7/root/usr/bin/gcc
-ENV FC          /opt/rh/devtoolset-7/root/usr/bin/gfortran
+ENV CC          /opt/rh/devtoolset-8/root/usr/bin/gcc
+ENV FC          /opt/rh/devtoolset-8/root/usr/bin/gfortran
 
 # Build libraries with a parallel Make
 ENV J 4
@@ -32,7 +32,7 @@ ENV J 4
 ENV LD_LIBRARY_PATH /usr/local/lib
 ENV NETCDF /comsoftware/libs/netcdf
 
-# Download GNU version 7 compilers via devtoolset
+# Download GNU version 8 compilers via devtoolset
 
 RUN yum -y install centos-release-scl \
  && yum -y install devtoolset-8 \
@@ -225,9 +225,12 @@ RUN mkdir -p /var/run/sshd \
     && sed -i 's/#RSAAuthentication yes/RSAAuthentication yes/g' /etc/ssh/sshd_config \
     && sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
 
-# Set up user home space correctly
+# Set up user home space correctly and make sure user has permissions on all stuff in /comsoftware
 RUN chown -R comuser:comusers /home \
  && chmod 6755 /home
+RUN chown -R comuser:comusers /comsoftware \
+ && chmod -R 6755 /comsoftware
+
 
 # all root steps completed above, now below as regular userID comuser
 USER comuser

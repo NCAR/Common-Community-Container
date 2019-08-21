@@ -4,16 +4,22 @@ MAINTAINER Michael Kavulich <kavulich@ucar.edu>
 
 # Set up base OS environment
 
-RUN yum -y update
-RUN yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper \
+RUN yum -y update \
+ && yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper \
   jasper-devel hostname m4 make perl tar bash ksh tcsh time wget which zlib zlib-devel \
   openssh-clients openssh-server net-tools fontconfig libgfortran libXext libXrender \
-  ImageMagick sudo epel-release git
+  ImageMagick sudo epel-release git \
 # Libraries for NetCDF
-RUN yum -y install libcurl-devel zlib-devel
-RUN yum -y install python-pip python-devel
+ && yum -y install libcurl-devel zlib-devel \
+ && yum -y install python-pip python-devel \
 # Libraries for HDF4
-RUN yum -y install flex flex-devel bison bison-devel
+ && yum -y install flex flex-devel bison bison-devel \
+# Download GNU version 8 compilers via devtoolset
+ && yum -y install centos-release-scl \
+ && yum -y install devtoolset-8 \
+ && yum -y install devtoolset-8-gcc devtoolset-8-gcc-gfortran devtoolset-8-gcc-c++ \
+ && scl enable devtoolset-8 bash \
+ && scl enable devtoolset-8 tcsh
 
 
 #Source code locations
@@ -31,14 +37,6 @@ ENV J 4
 # Other necessary environment variables
 ENV LD_LIBRARY_PATH /usr/local/lib
 ENV NETCDF /comsoftware/libs/netcdf
-
-# Download GNU version 8 compilers via devtoolset
-
-RUN yum -y install centos-release-scl \
- && yum -y install devtoolset-8 \
- && yum -y install devtoolset-8-gcc devtoolset-8-gcc-gfortran devtoolset-8-gcc-c++ \
- && scl enable devtoolset-8 bash \
- && scl enable devtoolset-8 tcsh 
 
 RUN groupadd comusers -g 9999
 RUN useradd -u 9999 -g comusers -G wheel -M -d /home comuser
@@ -135,7 +133,6 @@ RUN source /opt/rh/devtoolset-8/enable \
 # Download and compile HDF4 and HDFEOS
 #
 # Libraries for HDF4
-RUN yum -y install flex flex-devel bison bison-devel
 ENV HDF4_URL       http://www.hdfgroup.org/ftp/HDF/releases/HDF4.2r3/src/HDF4.2r3.tar.gz
 ENV HDFEOS_URL     https://dtcenter.org/sites/default/files/community-code/met/docker_data/HDF-EOS2.16v1.00.tar.Z
 RUN source /opt/rh/devtoolset-8/enable \

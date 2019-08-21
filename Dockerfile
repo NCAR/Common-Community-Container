@@ -4,16 +4,22 @@ MAINTAINER Michael Kavulich <kavulich@ucar.edu>
 
 # Set up base OS environment
 
-RUN yum -y update
-RUN yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper \
+RUN yum -y update \
+ && yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper \
   jasper-devel hostname m4 make perl tar bash ksh tcsh time wget which zlib zlib-devel \
   openssh-clients openssh-server net-tools fontconfig libgfortran libXext libXrender \
-  ImageMagick sudo epel-release git
+  ImageMagick sudo epel-release git \
 # Libraries for NetCDF
-RUN yum -y install libcurl-devel zlib-devel
-RUN yum -y install python-pip python-devel
+ && yum -y install libcurl-devel zlib-devel \
+ && yum -y install python-pip python-devel \
 # Libraries for HDF4
-RUN yum -y install flex flex-devel bison bison-devel
+ && yum -y install flex flex-devel bison bison-devel \
+# Download GNU version 7 compilers via devtoolset \
+ && yum -y install centos-release-scl \
+ && yum -y install devtoolset-7 \
+ && yum -y install devtoolset-7-gcc devtoolset-7-gcc-gfortran devtoolset-7-gcc-c++ \
+ && scl enable devtoolset-7 bash \
+ && scl enable devtoolset-7 tcsh
 
 
 #Source code locations
@@ -31,14 +37,6 @@ ENV J 4
 # Other necessary environment variables
 ENV LD_LIBRARY_PATH /usr/local/lib
 ENV NETCDF /comsoftware/libs/netcdf
-
-# Download GNU version 7 compilers via devtoolset
-
-RUN yum -y install centos-release-scl \
- && yum -y install devtoolset-7 \
- && yum -y install devtoolset-7-gcc devtoolset-7-gcc-gfortran devtoolset-7-gcc-c++ \
- && scl enable devtoolset-7 bash \
- && scl enable devtoolset-7 tcsh 
 
 RUN groupadd comusers -g 9999
 RUN useradd -u 9999 -g comusers -G wheel -M -d /home comuser

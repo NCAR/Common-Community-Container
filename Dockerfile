@@ -40,9 +40,6 @@ ENV NETCDF /comsoftware/libs/netcdf
 
 RUN groupadd comusers -g 9999
 RUN useradd -u 9999 -g comusers -G wheel -M -d /home comuser
-RUN mkdir /comsoftware \
- &&  chown -R comuser:comusers /comsoftware \
- &&  chmod 6755 /comsoftware
 
 # Build OpenMPI
 RUN mkdir -p /comsoftware/libs/openmpi/BUILD_DIR
@@ -221,9 +218,9 @@ RUN mkdir -p /var/run/sshd \
 
 # Set up user home space correctly and make sure user has permissions on all stuff in /comsoftware
 RUN chown -R comuser:comusers /home \
- && chmod 6755 /home
+ && chmod 6775 /home
 RUN chown -R comuser:comusers /comsoftware \
- && chmod -R 6755 /comsoftware
+ && chmod -R 6775 /comsoftware
 
 
 # all root steps completed above, now below as regular userID comuser

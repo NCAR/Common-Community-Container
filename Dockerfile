@@ -1,5 +1,5 @@
 #
-FROM centos:latest
+FROM centos:7
 MAINTAINER Michael Kavulich <kavulich@ucar.edu>
 
 # Set up base OS environment

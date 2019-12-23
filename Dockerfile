@@ -8,7 +8,7 @@ RUN yum -y update \
  && yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper \
   jasper-devel hostname m4 make perl tar bash ksh tcsh time wget which zlib zlib-devel \
   openssh-clients openssh-server net-tools fontconfig libgfortran libXext libXrender \
-  ImageMagick sudo epel-release git \
+  libxml2 libxml2-devel ImageMagick sudo epel-release git \
 # Libraries for NetCDF
  && yum -y install libcurl-devel zlib-devel \
  && yum -y install python-pip python-devel \
@@ -60,6 +60,19 @@ RUN source /opt/rh/devtoolset-8/enable \
  && cd / \
  && rm -rf /comsoftware/libs/openmpi/BUILD_DIR
 
+# Build SZIP libraries
+RUN mkdir -p /comsoftware/libs/szip/BUILD_DIR
+RUN source /opt/rh/devtoolset-8/enable \
+ && cd /comsoftware/libs/szip/BUILD_DIR \
+ && curl -L -O https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz \
+ && tar -xf szip-2.1.1.tar.gz \
+ && cd szip-2.1.1 \
+ && ./configure --prefix=/usr/local/ &> /comsoftware/libs/build_log_szip_config \
+ && echo dummy printout to keep travis happy szip config \
+ && make install &> /comsoftware/libs/build_log_szip_make \
+ && echo dummy printout to keep travis happy szip make \
+ && rm -rf /comsoftware/libs/szip/BUILD_DIR
+
 # Build HDF5 libraries
 RUN mkdir -p /comsoftware/libs/hdf5/BUILD_DIR
 RUN source /opt/rh/devtoolset-8/enable \
@@ -67,7 +80,7 @@ RUN source /opt/rh/devtoolset-8/enable \
  && git clone https://bitbucket.hdfgroup.org/scm/hdffv/hdf5.git \
  && cd hdf5 \
  && git checkout hdf5-1_10_4 \
- && ./configure --enable-fortran --enable-cxx --enable-shared --prefix=/usr/local/ &> /comsoftware/libs/build_log_hdf5_config \
+ && ./configure --enable-fortran --enable-cxx --enable-shared --with-zlib=/usr/local --with-szlib=/usr/local --prefix=/usr/local/ &> /comsoftware/libs/build_log_hdf5_config \
  && echo dummy printout to keep travis happy hdf5 config \
  && make install &> /comsoftware/libs/build_log_hdf5_make \
  && echo dummy printout to keep travis happy hdf5 make \
@@ -111,10 +124,10 @@ RUN source /opt/rh/devtoolset-8/enable \
  && echo dummy printout to keep travis happy ncf make
 
 RUN pip install --upgrade pip \
- && pip install numpy \
- && echo pip istalled numpy
+ && pip install numpy f90nml \
+ && echo pip istalled numpy and f90nml
 RUN pip install --upgrade setuptools \
- && echo pip istalled setuptools
+ && echo pip istalled setuptools \
 RUN ldconfig -v
 
 # Build netCDF4-python libraries

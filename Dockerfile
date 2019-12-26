@@ -127,7 +127,7 @@ RUN pip install --upgrade pip \
  && pip install numpy f90nml \
  && echo pip istalled numpy and f90nml
 RUN pip install --upgrade setuptools \
- && echo pip istalled setuptools \
+ && echo pip istalled setuptools
 RUN ldconfig -v
 
 # Build netCDF4-python libraries

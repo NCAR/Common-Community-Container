@@ -124,8 +124,8 @@ RUN source /opt/rh/devtoolset-8/enable \
  && echo dummy printout to keep travis happy ncf make
 
 RUN pip install --upgrade pip \
- && pip install numpy f90nml \
- && echo pip istalled numpy and f90nml
+ && pip install numpy f90nml matplotlib scipy configobj pandas \
+ && echo pip istalled numpy, f90nml, matplotlib, scipy, configobj, and pandas
 RUN pip install --upgrade setuptools \
  && echo pip istalled setuptools
 RUN ldconfig -v

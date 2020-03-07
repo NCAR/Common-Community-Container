@@ -177,7 +177,7 @@ RUN mkdir -p /comsoftware/libs/cmake/BUILD_DIR \
  && curl -O -L https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5.tar.gz \
  && tar -xf cmake-3.16.5.tar.gz \
  && cd cmake-3.16.5 \
- && ./bootstrap \
+ && ./bootstrap -- -DCMAKE_USE_OPENSSL=OFF \
  && make \
  && make install \
  && cd / \

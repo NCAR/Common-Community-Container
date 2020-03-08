@@ -174,10 +174,10 @@ RUN source /opt/rh/devtoolset-8/enable \
 RUN mkdir -p /comsoftware/libs/cmake/BUILD_DIR \
  && source /opt/rh/devtoolset-8/enable \
  && cd /comsoftware/libs/cmake/BUILD_DIR \
- && curl -O -L https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3.tar.gz \
- && tar -xf cmake-3.13.3.tar.gz \
- && cd cmake-3.13.3 \
- && ./bootstrap \
+ && curl -O -L https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5.tar.gz \
+ && tar -xf cmake-3.16.5.tar.gz \
+ && cd cmake-3.16.5 \
+ && ./bootstrap -- -DCMAKE_USE_OPENSSL=OFF \
  && make \
  && make install \
  && cd / \

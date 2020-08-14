@@ -11,7 +11,7 @@ RUN yum -y update \
   libxml2 libxml2-devel ImageMagick sudo epel-release git \
 # Libraries for NetCDF
  && yum -y install libcurl-devel zlib-devel \
- && yum -y install python-pip python-devel \
+ && yum -y install python3 python3-pip python3-devel \
 # Libraries for HDF4
  && yum -y install flex flex-devel bison bison-devel \
 # Download GNU version 8 compilers via devtoolset
@@ -123,11 +123,11 @@ RUN source /opt/rh/devtoolset-8/enable \
  && make install &> /comsoftware/libs/build_log_ncf_make \
  && echo dummy printout to keep travis happy ncf make
 
-RUN pip install --upgrade pip \
- && pip install numpy f90nml matplotlib scipy configobj pandas shapely \
- && echo pip istalled numpy, f90nml, matplotlib, scipy, configobj, and pandas
-RUN pip install --upgrade setuptools \
- && echo pip istalled setuptools
+RUN pip3 install --user --upgrade pip \
+ && pip3 install numpy f90nml matplotlib scipy configobj pandas shapely wheel \
+ && echo pip3 istalled numpy, f90nml, matplotlib, scipy, configobj, and pandas
+RUN pip3 install --upgrade setuptools \
+ && echo pip3 istalled setuptools
 RUN ldconfig -v
 
 # Build netCDF4-python libraries
@@ -138,10 +138,10 @@ RUN source /opt/rh/devtoolset-8/enable \
  && export LD_LIBRARY_PATH=${NETCDF}/lib:${LD_LIBRARY_PATH} \
  && export NETCDF4_DIR=${NETCDF} \
  && export HDF5_DIR=/usr/local \
- && python setup.py build \
- && CPPFLAGS="-I${NETCDF}/include -I/usr/local/include" LDFLAGS="-L${NETCDF}/lib -L/usr/local/lib" python setup.py install \
+ && python3 setup.py build \
+ && CPPFLAGS="-I${NETCDF}/include -I/usr/local/include" LDFLAGS="-L${NETCDF}/lib -L/usr/local/lib" python3 setup.py install \
  && echo dummy printout to keep travis happy ncf4-python install
-#&& python setup.py build &> /comsoftware/libs/build_log_ncf4-python_build
+#&& python3 setup.py build &> /comsoftware/libs/build_log_ncf4-python_build
 
 # Download and compile HDF4 and HDFEOS
 #

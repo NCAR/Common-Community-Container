@@ -8,7 +8,7 @@ RUN yum -y update \
  && yum -y install scl file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper \
   jasper-devel hostname m4 make perl tar bash ksh tcsh time wget which zlib zlib-devel \
   openssh-clients openssh-server net-tools fontconfig libgfortran libXext libXrender \
-  libxml2 libxml2-devel ImageMagick sudo epel-release git \
+  libxml2 libxml2-devel perl-XML-LibXML ImageMagick sudo epel-release git \
 # Libraries for NetCDF
  && yum -y install libcurl-devel zlib-devel \
  && yum -y install python3 python3-pip python3-devel \
